@@ -16,11 +16,11 @@ const Page = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await me(); 
+      await me();
     };
     fetchData();
   }, [me]);
-  
+
   const handleNominalClick = (value: string) => {
     setNominal(value);
   };
@@ -28,10 +28,10 @@ const Page = () => {
     e.preventDefault();
 
     const data = {
-        nominal: parseInt(nominal), 
-        pesan,
-        user_id: user?.id,  
-        name: user?.name,
+      nominal: parseInt(nominal.replace(/\./g, ''), 10),
+      pesan,
+      user_id: user?.id,
+      name: user?.name,
     };
 
     try {
@@ -46,6 +46,8 @@ const Page = () => {
 
       if (response.ok) {
         alert('Donation created successfully!');
+        setNominal('');
+        setPesan('');
       } else {
         alert('Failed to create donation');
       }
@@ -57,6 +59,13 @@ const Page = () => {
     await logout();
     router.push('/');
   };
+
+  const formatCurrency = (amount: string) => {
+    const num = parseInt(amount.replace(/\./g, ''), 10); // Remove existing periods for parsing
+    if (isNaN(num)) return '0';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="absolute top-4 right-10">
@@ -69,7 +78,7 @@ const Page = () => {
           <CgProfile size={100} />
         </div>
         <div>
-        <h1 className="text-3xl font-semibold">{user?.name || 'Nama'}</h1>
+          <h1 className="text-3xl font-semibold">{user?.name || 'Nama'}</h1>
           <p className="text-xl font-base mt-5">Makasih abangkuu..</p>
         </div>
       </div>
@@ -156,9 +165,16 @@ const Page = () => {
                   />
                 </div>
               </div>
-              <Button className="w-[100px] mt-5 font-bold" type="submit">
-                Kirim
-              </Button>
+              <div className="flex flex-row justify-between mt-10">
+                <div className='text-2xl font-semibold'>
+                  <h1>Total: Rp.&nbsp;{formatCurrency(nominal)}</h1>
+                </div>
+                <div>
+                  <Button className="w-[100px] font-bold" type="submit">
+                    Kirim
+                  </Button>
+                </div>
+              </div>
             </form>
           </CardContent>
         </Card>
