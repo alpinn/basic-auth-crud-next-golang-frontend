@@ -18,6 +18,7 @@ interface Donasi {
   name: string;
   nominal: number;
   pesan: string;
+  url: string;
   created_at: string;
 }
 
@@ -66,7 +67,7 @@ const Page = () => {
           Logout
         </Button>
       </div>
-      <Card className="w-full">
+      <Card className="w-full mt-24">
         <CardHeader>
           <CardTitle className="text-3xl text-center">
             Riwayat Dapat Uang
@@ -80,7 +81,8 @@ const Page = () => {
                   <TableHead className="w-[100px]">User</TableHead>
                   <TableHead>Pesan</TableHead>
                   <TableHead>Nominal</TableHead>
-                  <TableHead className="text-right">Date</TableHead>
+                  <TableHead>URL Youtube</TableHead>
+                  <TableHead className="text-right">Tanggal Donasi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -92,6 +94,7 @@ const Page = () => {
                       </TableCell>
                       <TableCell>{donasi.pesan}</TableCell>
                       <TableCell>{donasi.nominal}</TableCell>
+                      <TableCell>{donasi.url}</TableCell>
                       <TableCell className="text-right">
                         {new Date(donasi.created_at).toLocaleDateString()}
                       </TableCell>

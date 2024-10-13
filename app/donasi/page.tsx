@@ -12,6 +12,8 @@ const Page = () => {
   const { user, logout, me } = useAuth();
   const [nominal, setNominal] = useState('');
   const [pesan, setPesan] = useState('');
+  const [url, setUrl] = useState('');
+  const [videoId, setVideoId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,12 +26,27 @@ const Page = () => {
   const handleNominalClick = (value: string) => {
     setNominal(value);
   };
+
+  const extractVideoId = (youtubeUrl: string) => {
+    const urlPattern = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = youtubeUrl.match(urlPattern);
+    return match ? match[1] : null;
+  };
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputUrl = e.target.value;
+    setUrl(inputUrl);
+    const videoId = extractVideoId(inputUrl);
+    setVideoId(videoId);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const data = {
       nominal: parseInt(nominal.replace(/\./g, ''), 10),
       pesan,
+      url,
       user_id: user?.id,
       name: user?.name,
     };
@@ -48,6 +65,8 @@ const Page = () => {
         alert('Donation created successfully!');
         setNominal('');
         setPesan('');
+        setUrl('');
+        setVideoId(null);
       } else {
         alert('Failed to create donation');
       }
@@ -67,13 +86,13 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="absolute top-4 right-10">
+    <div className="flex flex-col min-h-screen py-8">
+      <div className="absolute top-4 right-12 lg:right-14">
         <Button color="redish" variant="default" onClick={handleLogout}>
           Logout
         </Button>
       </div>
-      <div className="flex flex-row mt-20 gap-10 items-center">
+      <div className="flex flex-row mt-20 gap-10 items-center  ml-0 lg:ml-[320px]">
         <div>
           <CgProfile size={100} />
         </div>
@@ -82,8 +101,8 @@ const Page = () => {
           <p className="text-xl font-base mt-5">Makasih abangkuu..</p>
         </div>
       </div>
-      <div className="mt-8">
-        <Card className="w-full">
+      <div className="mt-8 flex justify-center">
+        <Card className="w-full lg:w-[600px]">
           <CardContent className="p-4">
             <form onSubmit={handleSubmit}>
               <div className="grid w-full items-center gap-5">
@@ -146,13 +165,14 @@ const Page = () => {
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="password">Dari</Label>
-                  <Button
-                    color="redish"
-                    variant="default"
-                    className="w-[100px]"
+                  <div className='bg-[#ff8787] w-[100px] inline-flex items-center text-text justify-center whitespace-nowrap rounded-lg h-10 px-4 py-2 border-2 border-border dark:border-darkBorder shadow-light dark:shadow-dark hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none dark:hover:shadow-none ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'>
+                  <p
+                    className="text-center"
                   >
                     {user?.name || 'User'}
-                  </Button>
+                  </p>
+
+                  </div>
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="pesan">Pesan</Label>
@@ -163,6 +183,30 @@ const Page = () => {
                     name="pesan"
                     id="pesan"
                   />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="url">YouTube URL</Label>
+                  <Input
+                    placeholder="Paste the YouTube video URL here..."
+                    value={url}
+                    onChange={handleUrlChange}
+                    name="url"
+                    id="url"
+                  />
+                  {videoId && (
+                    <div className="mt-4">
+                      <iframe
+                        className="mt-4"
+                        width="560"
+                        height="315"
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-row justify-between mt-10">
