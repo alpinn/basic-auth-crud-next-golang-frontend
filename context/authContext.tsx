@@ -119,16 +119,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const me = async () => {
     const sessionKey = localStorage.getItem('sessionKey');
-    const response = await fetch('http://localhost:8080/me', {
-      headers: { 'Session-Key': sessionKey || '' },
-    });
-    if (response.ok) {
-      const userData = await response.json();
-      setUser(userData);
-      return userData;
+    if (!sessionKey) {
+      console.error('No session key found');
+      return null;
     }
-    return null;
+  
+    try {
+      const response = await fetch('http://localhost:8080/me', {
+        headers: { 'Session-Key': sessionKey },
+      });
+  
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+        return userData;
+      } else {
+        console.error('Failed to fetch user data', await response.json());
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching user data', error);
+      return null;
+    }
   };
+  
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register, me }}>

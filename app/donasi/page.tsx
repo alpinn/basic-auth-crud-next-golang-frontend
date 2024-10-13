@@ -80,7 +80,7 @@ const Page = () => {
   };
 
   const formatCurrency = (amount: string) => {
-    const num = parseInt(amount.replace(/\./g, ''), 10); // Remove existing periods for parsing
+    const num = parseInt(amount.replace(/\./g, ''), 10);
     if (isNaN(num)) return '0';
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };

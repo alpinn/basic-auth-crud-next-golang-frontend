@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAuth } from '@/context/authContext';
+import withAdmin from '@/lib/hoc/with.auth';
 
 interface Donasi {
   id: string;
@@ -122,4 +123,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default withAdmin(Page);
